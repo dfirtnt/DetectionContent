@@ -1,0 +1,26 @@
+title: Word Doc Macro Dropper in MSHTA
+description: In Q1 2020 a large campaign delivering URSNIF was observed. MS Word docs contianing macros with malicious vbs code. The code contained a copy of mshta.exe which was dropped on the filesystem with the filename microsoft.com and then used to launch dropped malicious HTML file.
+author: Andrew Skatoff
+references:
+- https://isc.sans.edu/forums/diary/Malicious+JavaScript+Dropping+Payload+in+the+Registry/25954/ -https://www.zscaler.com/blogs/research/new-ursnif-campaign-shift-powershell-mshta
+status: stable
+tags:
+- attack.T1170
+- attack.T1064
+logsource:
+  product: Windows
+  service: Sysmon
+detection:
+  selection1:
+    ParentImage:
+    - '*\winword.exe'
+    Image:
+    - '*\microsoft.com'
+  selection2:
+    EventID: 11
+    TargetFilename|contains:
+    - 'ProgramData\index.html'
+  condition: selection1 AND selection2
+falsepositives:
+- none
+level: high
